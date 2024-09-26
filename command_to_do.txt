@@ -1,0 +1,1 @@
+1. run on the venv by using D:\PROJECTS\Chatbot_PCB> .venv\Scripts\Activate.ps1
