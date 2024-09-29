@@ -13,7 +13,6 @@ from dotenv import load_dotenv
 class Data_manipulated:
     def __init__(self):
         load_dotenv()
-        print(f"check at data_manipulated.py\n")
         self.path_data_pdf = os.getenv("LOCAL_DATA_PDF")
         
         self.model_name = os.getenv("MODEL_NAME")
@@ -56,7 +55,7 @@ class Data_manipulated:
     #return chanks from path data pdf
     def return_chunks_from_path_data_pdf(self):
 
-        print(f"Current working directory: {os.getcwd()}")
+       # print(f"Current working directory: {os.getcwd()}")
         pdf_path = r"d:\\PROJECTS\\Chatbot_PCB\\DATA\\CHANKֹ1\\check_pdf\\40258.pdf"
         print(f"Checking if file exists: {os.path.exists(pdf_path)}")
 
@@ -66,7 +65,7 @@ class Data_manipulated:
 
         all_files = os.listdir(self.path_data_pdf)
         pdf_files = [f for f in all_files if f.endswith('.pdf')]
-        
+        # print(f"PDF files: {pdf_files}\n")
         
         if not pdf_files:
             print(f"No PDF files found in {self.path_data_pdf}")
