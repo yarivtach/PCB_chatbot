@@ -20,19 +20,19 @@ class ChatBot:
         self.model_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={self.gemini_api_key}"
         genai.configure(api_key=os.environ["GEMINI_API_KEY"]) 
         self.path_data_pdf = os.getenv("PATH_DATA_PDF")
-
+        self.collection = None
         self.model = genai.GenerativeModel(self.model_name)
-        
         self.data_manipulated = Data_manipulated()
+        
         self.chunks = self.data_manipulated.return_chunks_from_path_data_pdf()
         if self.chunks is None:
             print("No data to process. Please ensure PDF files are present in the data directory.")
             return
         
-        # self.vector_RAG_database = self.data_manipulated.prepare_data_for_chatbot()
-
-
-    
+            
+        
+        
+            
     def create_vector_database_for_quaries(self):
         qdrant_client = Qdrant.from_documents(
             documents=self.chunks,
@@ -56,29 +56,12 @@ class ChatBot:
 
         
     def RAG(self, query):
-        client = chromadb.Client()
-        embeddings = self.convert_chunks_to_vector_database()
-        documents = []
-        ids = []
-        metadata = []
-        for i, doc in enumerate(self.chunks):
-            ids.append(str(i))
-            documents.append(doc.page_content)
-            metadata.append({"source": doc.metadata.get("source", "")})
-
-        collection = client.create_collection(name = "chatbot_collection")
-        collection.add(
-            documents=documents,
-            ids=ids,
-            embeddings=embeddings,
-            #metadata=metadata
-        )
-        
         #query the collection
-        response = collection.query(query_texts=[query],n_results=1)
+        response = self.collection.query(query_texts=[query],n_results=1)
                                     
         relevant_document = response.get("documents")[0][0]
         answer = self.generate_response_gemini(query, relevant_document)
+        
         return answer
     
     
@@ -142,8 +125,8 @@ class ChatBot:
                 # print(f"Response JSON: {response_json}\n")
 
                 # Extract the generated text from the response
-                #generated_text = response_json.get('candidates', [])[0].get('content', {}).get('parts', [])[0].get('text', '')
                 generated_text = self.parse_response(response_json)
+                
                # print(f"generated_text: {generated_text}\n")
                 return generated_text
             else:
